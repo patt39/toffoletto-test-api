@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+  id          String       @id @default(uuid())
+  email       String       @unique
+  name        String?
+  password    String?
+  status      Boolean      @default(false)
+  userTenants UserTenant[]
+  tenantId    String?
+  tenant      Tenant?      @relation(fields: [tenantId], references: [id])
+}
+
+model Tenant {
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+  endDate     DateTime?
+  id          String       @id @default(uuid())
+  name        String
+  plan        Plan         @default(FREE)
+  status      Boolean      @default(false)
+  userTenants UserTenant[]
+  invitations Invitation[]
+  users       User[]
+}
+
+model Invitation {
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+  expireDate DateTime?
+  id         String    @id @default(uuid())
+  token      String?
+  status     Status    @default(PENDING)
+  tenantId   String
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  email      String
+  role       Role      @default(USER)
+}
+
+model UserTenant {
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenantId  String
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  role      Role      @default(USER)
+}
+
+enum Plan {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+enum Role {
+  USER
+  TENANT_ADMIN
+  PLATFORM_ADMIN
+}
+
+enum Status {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
