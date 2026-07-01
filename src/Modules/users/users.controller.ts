@@ -13,13 +13,11 @@ import {
   Param,
   ForbiddenException,
   ParseUUIDPipe,
-  Query,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { UsersService } from './users.service';
 import {
   CreateLoginUserDto,
-  GetUsersDto,
   RegisterUserDto,
   ResetPasswordUserDto,
   UpdateResetPasswordUserDto,

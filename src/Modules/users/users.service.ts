@@ -99,10 +99,10 @@ export class UsersService {
     options: UpdateUsersOptions,
   ): Promise<User> {
     const { userId } = selections;
-    const { name, email, password, status } = options;
+    const { name, email, password, status, tenantId } = options;
     const user = this.client.user.update({
       where: { id: userId },
-      data: { name, email, password, status },
+      data: { name, email, password, status, tenantId },
     });
 
     return user;
